@@ -1,5 +1,17 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
+import { render } from 'react-dom';
+import { Provider } from 'react-redux';
+import store from './store';
+import Routes from './Routes';
+import './global.scss';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const App = () => (
+	<Provider store={ store }>
+		<Routes />
+	</Provider>
+);
+
+render(
+	<App />,
+	document.getElementById('root')
+);
