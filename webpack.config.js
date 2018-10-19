@@ -38,6 +38,20 @@ module.exports = {
     open: true,
     proxy: {
       '/api': 'http://localhost:8080'
+    },
+    compress: true,
+    disableHostCheck: true,   // That solved .
+    quiet: false,
+    noInfo: false,
+    stats: {
+      // Config for minimal console.log mess.
+      colors: true,
+      version: false,
+      hash: false,
+      timings: false,
+      chunks: false,
+      chunkModules: false
+
     }
   },
   plugins: [
