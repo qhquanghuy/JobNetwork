@@ -4,8 +4,6 @@ import './Signup.scss';
 const Signup = ({
 	handleSubmit,
 	loading,
-	username,
-	password,
 	updateUsername,
 	updatePassword,
 	success,
@@ -21,7 +19,6 @@ const Signup = ({
 		<input
 			placeholder="Username"
 			className="form-control"
-			value={ username }
 			onChange={ updateUsername }
 		/>
 
@@ -29,7 +26,6 @@ const Signup = ({
 			type="password"
 			placeholder="Password"
 			className="form-control"
-			value={ password }
 			onChange={ updatePassword }
 		/>
 
