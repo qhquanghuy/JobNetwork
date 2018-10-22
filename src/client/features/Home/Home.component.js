@@ -12,11 +12,10 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Signup from '../Signup';
 const Home = () => (
 	<div>
         <h3>Home page</h3>
-        <Link to="/user/login">login</Link>
+        <Link to="/signup">login</Link>
     </div>
 );
 

@@ -18,7 +18,7 @@ app.use(express.static(join(__dirname, 'dist')));
 
 
 app.get('*', (req, res) => {
-	res.sendFile(join(__dirname, 'public/index.html'));
+	res.sendFile(join(__dirname, '../../public/index.html'));
 });
 
 app.use('/api', api);

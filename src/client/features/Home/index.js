@@ -11,7 +11,8 @@
 
 import React from 'react';
 import HomeComponent from './Home.component';
+import { withRouter } from 'react-router-dom'
 
 const Home = () => <HomeComponent />
-export default Home;
+export default withRouter(Home);
 

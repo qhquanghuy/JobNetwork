@@ -15,14 +15,9 @@
 
 const express = require('express');
 const router = express.Router();
-router.post("/login", (req, res) => {
+router.post("/signin", (req, res) => {
     console.log(req.body)
     res.send("some thing")
-})
-
-router.get("/login", (req, res) => {
-    res.send("hello world")
-
 })
 
 module.exports = router;

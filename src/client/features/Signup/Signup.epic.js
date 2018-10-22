@@ -10,7 +10,7 @@ export const sendSignupInfoEpic = (action$, store, { fetch$ }) => action$.pipe(
 
 	mergeMap(({ payload }) => 
 		fetch$
-			.post(url, { username: payload.username, password: payload.password })
+			.post(url, { username: payload.email, password: payload.password })
 			.pipe(
 				pluck('response'),
 				catchError((err) => console.log(err))
