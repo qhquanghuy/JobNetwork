@@ -22,7 +22,7 @@ CREATE TABLE `user` (
 
 CREATE TABLE `issuer` (
 	`id` INT NOT NULL,
-	`web_page` varchar(200) NOT NULL,
+	`web_page` varchar(500) NOT NULL,
 	`api_secret` varchar(256) NOT NULL,
 	PRIMARY KEY (`id`)
 );
@@ -30,12 +30,12 @@ CREATE TABLE `issuer` (
 CREATE TABLE `common_info` (
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`email` varchar(100) NOT NULL,
-	`password_hash` varchar(64) NOT NULL,
+	`password_hash` varchar(256) NOT NULL,
 	`name` varchar(100) NOT NULL,
-	`public_key` varchar(200),
+	`public_key` varchar(256),
 	`trusted_by_system_at` DATETIME,
 	`created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	`description` varchar(500) NOT NULL,
+	`description` varchar(500),
 	PRIMARY KEY (`id`)
 );
 
@@ -64,6 +64,9 @@ CREATE TABLE `job` (
 	`deadline` DATETIME NOT NULL,
 	`created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`description` TEXT NOT NULL,
+	`applicants` INT,
+	`rejected_applicants` INT,
+	`accepted_applicants` INT,
 	PRIMARY KEY (`id`)
 );
 

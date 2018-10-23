@@ -14,16 +14,18 @@ const Signup = ({
 	loading,
 	updateEmail,
 	updatePassword,
+	updateReytypePassword,
 	success,
-	id
+	role
 }) => (
 	<SignupComponent
 		handleSubmit={ handleSubmit }
 		loading={ loading }
 		updateEmail={ updateEmail }
 		updatePassword={ updatePassword }
+		updateReytypePassword={ updateReytypePassword }
 		success={ success }
-		id={ id }
+		role = { role }
 	/>
 );
 
@@ -46,6 +48,10 @@ const enhanceComponent = compose(
 		),
 		updatePassword: ({ setPassword }) => compose(
 			setPassword,
+			getTargetValue
+		),
+		updateRetypePassword: ({ setRetypePassword }) => compose(
+			setRetypePassword,
 			getTargetValue
 		)
 	})

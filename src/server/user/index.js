@@ -16,11 +16,12 @@
 const express = require('express');
 const router = express.Router();
 
-const { createUser } = require('./signin')
+const { createUser } = require('./user-dao')
 
-router.post("/signin", (req, res) => {
+router.post("/signup", (req, res) => {
     createUser(req.body)
-    res.send("some thing")
+        .then(res.send)
+        .catch(console.log)
 })
 
 module.exports = router;

@@ -6,6 +6,9 @@ const Signup = ({
 	loading,
 	updateEmail,
 	updatePassword,
+	updateRetypePassword,
+	updateRole,
+	role,
 	success
 }) => (
 	<form onSubmit={ handleSubmit }>
@@ -34,7 +37,7 @@ const Signup = ({
 			type="password"
 			placeholder="Retype password"
 			className="form-control"
-			onChange={ updatePassword }
+			onChange={ updateRetypePassword }
 		/>
 
 		<input
@@ -51,20 +54,13 @@ const Signup = ({
 				<label>
 					Role
 				</label>
-				<select defaultValue = "3">
+				<select defaultValue = { role }>
 					<option value="1">User</option>
 					<option value="2">Employer</option>
 					<option value="3">Issuer</option>
 				</select>
 			</span>
 		</div>
-
-		<input
-			hidden
-			placeholder="Public key	"
-			className="form-control"
-			onChange={ updateEmail }
-		/>
 
 		<button className="btn btn-primary">
 			{ loading ? 'Loading...' : 'Sign up'}

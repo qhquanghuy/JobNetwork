@@ -5,6 +5,8 @@ export const { actions, initial, reducer } = autodux({
 	initial: {
 		email: '',
 		password: '',
+		retypePassword: '',
+		role: 1,
 		loading: false,
 		success: false,
 	},

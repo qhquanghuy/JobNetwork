@@ -3,7 +3,7 @@ import { tap, catchError, delay, map, pluck, mergeMap } from 'rxjs/operators';
 import { actions } from './Signup.duck';
 
 const { sendSignupInfo, signupSuccess } = actions;
-const url = 'http://localhost:8080/api/user/signin';
+const url = 'http://localhost:8080/api/user/signup';
 const header = { 'Content-Type': 'application/json; charset=utf-8' };
 
 export const sendSignupInfoEpic = (action$, store, { fetch$ }) => action$.pipe(
