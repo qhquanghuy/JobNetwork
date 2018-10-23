@@ -7,7 +7,6 @@ export const { actions, initial, reducer } = autodux({
 		password: '',
 		loading: false,
 		success: false,
-		id: null
 	},
 	actions: {
 		sendSignupInfo: (state, { email, password }) => ({
@@ -19,7 +18,6 @@ export const { actions, initial, reducer } = autodux({
 			return ({
 				...state,
 				success: true,
-				id: res
 			})
 		}
 	}

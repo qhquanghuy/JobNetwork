@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 10:44:57 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Monday, 22nd October 2018 10:57:16 am
+ * Last Modified: Tuesday, 23rd October 2018 12:01:26 pm
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -13,8 +13,8 @@
 
 
 
-import mysql from 'mysql2';
-
+const mysql = require('mysql2/promise');
+const bluebird = require('bluebird')
 let pool;
 
 module.exports = {
@@ -24,8 +24,12 @@ module.exports = {
       host: 'localhost',
       user: 'root',
       password: 'lovejoe99',
-      database: 'job_network'
+      database: 'job_network',
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0,
+      Promise: bluebird
     });
-    return pool.promise();
+    return pool;
   }
 }

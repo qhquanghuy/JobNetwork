@@ -6,8 +6,7 @@ const Signup = ({
 	loading,
 	updateEmail,
 	updatePassword,
-	success,
-	id
+	success
 }) => (
 	<form onSubmit={ handleSubmit }>
 		<h3>Sign up</h3>

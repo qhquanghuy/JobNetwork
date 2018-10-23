@@ -32,13 +32,13 @@ const enhanceComponent = compose(
 	connect(prop('signupReducer'), actions),
 	withHandlers({
 		handleSubmit: ({
-			username,
+			email,
 			password,
 			sendSignupInfo
 		}) => (event) => {
 			event.preventDefault();
 
-			sendSignupInfo({ username, password });
+			sendSignupInfo({ email, password });
 		},
 		updateEmail: ({ setEmail }) => compose(
 			setEmail,
