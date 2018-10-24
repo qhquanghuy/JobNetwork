@@ -4,21 +4,13 @@
  * File Created: Monday, 22nd October 2018 10:54:38 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Monday, 22nd October 2018 10:56:29 am
+ * Last Modified: Wednesday, 24th October 2018 12:25:20 pm
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
 
 
 
-
-
-CREATE TABLE `user` (
-	`id` INT NOT NULL,
-	`member_of_issuer` varchar(200),
-	`role` INT NOT NULL,
-	PRIMARY KEY (`id`)
-);
 
 CREATE TABLE `issuer` (
 	`id` INT NOT NULL,
@@ -27,15 +19,17 @@ CREATE TABLE `issuer` (
 	PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `common_info` (
+CREATE TABLE `user` (
 	`id` INT NOT NULL AUTO_INCREMENT,
-	`email` varchar(100) NOT NULL,
+	`email` varchar(100) NOT NULL UNIQUE,
 	`password_hash` varchar(256) NOT NULL,
 	`name` varchar(100) NOT NULL,
 	`public_key` varchar(256),
 	`trusted_by_system_at` DATETIME,
 	`created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`description` varchar(500),
+	`role` INT NOT NULL,
+	`skills` varchar(500),
 	PRIMARY KEY (`id`)
 );
 
@@ -63,10 +57,13 @@ CREATE TABLE `job` (
 	`quantity` INT NOT NULL,
 	`deadline` DATETIME NOT NULL,
 	`created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`title` varchar(100) NOT NULL,
 	`description` TEXT NOT NULL,
 	`applicants` INT,
 	`rejected_applicants` INT,
 	`accepted_applicants` INT,
+	`location` varchar(100) NOT NULL,
+	`skills` varchar(500) NOT NULL,
 	PRIMARY KEY (`id`)
 );
 
@@ -98,9 +95,13 @@ CREATE TABLE `skill` (
 	PRIMARY KEY (`id`)
 );
 
-ALTER TABLE `user` ADD CONSTRAINT `user_fk0` FOREIGN KEY (`id`) REFERENCES `common_info`(`id`);
+CREATE TABLE `job_skill` (
+	`job_id` INT NOT NULL,
+	`skill_id` INT NOT NULL,
+	PRIMARY KEY (`job_id`,`skill_id`)
+);
 
-ALTER TABLE `issuer` ADD CONSTRAINT `issuer_fk0` FOREIGN KEY (`id`) REFERENCES `common_info`(`id`);
+ALTER TABLE `issuer` ADD CONSTRAINT `issuer_fk0` FOREIGN KEY (`id`) REFERENCES `user`(`id`);
 
 ALTER TABLE `published_cert` ADD CONSTRAINT `published_cert_fk0` FOREIGN KEY (`issuer_id`) REFERENCES `issuer`(`id`);
 
@@ -121,4 +122,8 @@ ALTER TABLE `issuer_member` ADD CONSTRAINT `issuer_member_fk1` FOREIGN KEY (`use
 ALTER TABLE `user_skill` ADD CONSTRAINT `user_skill_fk0` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`);
 
 ALTER TABLE `user_skill` ADD CONSTRAINT `user_skill_fk1` FOREIGN KEY (`skill_id`) REFERENCES `skill`(`id`);
+
+ALTER TABLE `job_skill` ADD CONSTRAINT `job_skill_fk0` FOREIGN KEY (`job_id`) REFERENCES `job`(`id`);
+
+ALTER TABLE `job_skill` ADD CONSTRAINT `job_skill_fk1` FOREIGN KEY (`skill_id`) REFERENCES `skill`(`id`);
 

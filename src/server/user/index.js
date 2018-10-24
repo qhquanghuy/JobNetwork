@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Wednesday, 24th October 2018 10:21:35 am
+ * Last Modified: Wednesday, 24th October 2018 12:22:16 pm
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -24,14 +24,14 @@ const { ServerError } = require('./../helper/server-error')
 
 
 
-router.post("/", (req, res) => {
+// router.post("/", (req, res) => {
 
-        .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
-})
+//         .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+// })
 
 router.post("/signup", (req, res) => {
     createUser(req.body)
-        .then(user => res.send({token: jwt.sign({id: user.id, email: user.email, role: rows[0].role }, SECRET) }))
+        .then(user => res.send({token: jwt.sign({id: user.id, email: user.email, role: user.role }, SECRET) }))
         .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
 })
 
@@ -44,7 +44,14 @@ router.post("/signin", (req, res) => {
                 res.status(401).send({message: "email or password is incorrect!"})
             }
         })
-        .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+        .catch(err => { 
+            if(err.code === 'ER_DUP_ENTRY') {
+                res.status(400).send({message: "email's already exist!"})
+            } else {
+                res.status(500).send({ message: "Server error" })}
+
+            }
+        )
 })
 
 
