@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Wednesday, 24th October 2018 12:22:16 pm
+ * Last Modified: Friday, 2nd November 2018 10:43:29 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -17,17 +17,27 @@ const express = require('express');
 const router = express.Router();
 const { idWithLog } = require('./../helper/functions')
 const jwt = require('jsonwebtoken');
-const SECRET = "alksdfjlaksdfj"
-const { createUser, findUserByEmail } = require('./user-dao')
+const { createUser, findUserByEmail, getUserProfileById } = require('./user-dao')
 const { ServerError } = require('./../helper/server-error')
+const {SECRET} = require('./../helper/constant')
+const { prop } = require('ramda')
 
-
-
-
-// router.post("/", (req, res) => {
-
-//         .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
-// })
+router.get("/", (req, res) => {
+    console.log("asdfasdfasd")
+    getUserProfileById(req.user.id)
+        .then(([rows]) => {
+            if (rows[0]) {
+                delete rows[0].password_hash
+                let userProfile = rows[0]
+                userProfile.skills = rows.map(prop('skill_name'))
+                res.send(userProfile)
+            } else {
+                throw ServerError("User is not exist!", 403)
+            }
+            
+        })
+        .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+})
 
 router.post("/signup", (req, res) => {
     createUser(req.body)

@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 10:54:38 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Wednesday, 24th October 2018 12:25:20 pm
+ * Last Modified: Friday, 2nd November 2018 11:13:54 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -29,7 +29,7 @@ CREATE TABLE `user` (
 	`created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`description` varchar(500),
 	`role` INT NOT NULL,
-	`skills` varchar(500),
+	`last_time_open_notification` DATETIME,
 	PRIMARY KEY (`id`)
 );
 
@@ -101,6 +101,28 @@ CREATE TABLE `job_skill` (
 	PRIMARY KEY (`job_id`,`skill_id`)
 );
 
+CREATE TABLE `subcribe` (
+	`id` INT NOT NULL AUTO_INCREMENT,
+	`subcriber_id` INT NOT NULL,
+	`subcribing_id` INT NOT NULL,
+	`created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `notification` (
+	`id` INT NOT NULL AUTO_INCREMENT,
+	`user_id` INT NOT NULL,
+	`content` varchar(500) NOT NULL,
+	`created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `user_notification` (
+	`user_id` INT NOT NULL,
+	`notification_id` INT NOT NULL,
+	`seen_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 ALTER TABLE `issuer` ADD CONSTRAINT `issuer_fk0` FOREIGN KEY (`id`) REFERENCES `user`(`id`);
 
 ALTER TABLE `published_cert` ADD CONSTRAINT `published_cert_fk0` FOREIGN KEY (`issuer_id`) REFERENCES `issuer`(`id`);
@@ -126,4 +148,14 @@ ALTER TABLE `user_skill` ADD CONSTRAINT `user_skill_fk1` FOREIGN KEY (`skill_id`
 ALTER TABLE `job_skill` ADD CONSTRAINT `job_skill_fk0` FOREIGN KEY (`job_id`) REFERENCES `job`(`id`);
 
 ALTER TABLE `job_skill` ADD CONSTRAINT `job_skill_fk1` FOREIGN KEY (`skill_id`) REFERENCES `skill`(`id`);
+
+ALTER TABLE `subcribe` ADD CONSTRAINT `subcribe_fk0` FOREIGN KEY (`subcriber_id`) REFERENCES `user`(`id`);
+
+ALTER TABLE `subcribe` ADD CONSTRAINT `subcribe_fk1` FOREIGN KEY (`subcribing_id`) REFERENCES `user`(`id`);
+
+ALTER TABLE `notification` ADD CONSTRAINT `notification_fk0` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`);
+
+ALTER TABLE `user_notification` ADD CONSTRAINT `user_notification_fk0` FOREIGN KEY (`user_id`) REFERENCES `user`(`id`);
+
+ALTER TABLE `user_notification` ADD CONSTRAINT `user_notification_fk1` FOREIGN KEY (`notification_id`) REFERENCES `notification`(`id`);
 

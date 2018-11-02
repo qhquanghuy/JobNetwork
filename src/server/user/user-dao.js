@@ -29,11 +29,11 @@ function _getUserProfileById(id) {
     return promisePool
         .getPool()
         .query(
-            "SELECT user.*, skill.name, "
+            "SELECT user.*, skill.name skill_name "
             + "FROM user "
-            + "LEFT JOIN user_skill on user.id = user.id"
-            + "LEFT JOIN skill on user_skill.skill_id = skill.id"
-            + " WHERE common_info.id = ?",
+            + "LEFT JOIN user_skill on user.id = user.id "
+            + "LEFT JOIN skill on user_skill.skill_id = skill.id "
+            + "WHERE user.id = ?",
             [id]
         )
 }
