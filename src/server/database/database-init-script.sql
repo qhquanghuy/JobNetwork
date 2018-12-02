@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 10:54:38 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Friday, 2nd November 2018 11:13:54 am
+ * Last Modified: Sunday, 2nd December 2018 8:15:11 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -15,7 +15,7 @@
 CREATE TABLE `issuer` (
 	`id` INT NOT NULL,
 	`web_page` varchar(500) NOT NULL,
-	`api_secret` varchar(256) NOT NULL,
+	`ec_public_key` varchar(256) NOT NULL,
 	PRIMARY KEY (`id`)
 );
 
@@ -24,7 +24,7 @@ CREATE TABLE `user` (
 	`email` varchar(100) NOT NULL UNIQUE,
 	`password_hash` varchar(256) NOT NULL,
 	`name` varchar(100) NOT NULL,
-	`public_key` varchar(256),
+	`eth_address` varchar(256) UNIQUE,
 	`trusted_by_system_at` DATETIME,
 	`created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`description` varchar(500),
