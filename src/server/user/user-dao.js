@@ -2,6 +2,7 @@
 const promisePool = require('../database/connection-pool')
 const hash = require('hash.js')
 const { idWithLog } = require('./../helper/functions')
+const { userRole } = require('./../helper/constant')
 function _createUser(user) {
     return promisePool
         .getPool()
@@ -11,7 +12,19 @@ function _createUser(user) {
         )
         .then(([row]) => {
             user.id = row.insertId
-            return user
+            if (user.role === userRole.issuer) {
+                return promisePool
+                        .getPool()
+                        .query(
+                            "INSERT INTO issuer (id, web_page, ec_public_key) VALUES(?, ?, ?)",
+                            [user.id, user.webPage, user.ecPublicKey]
+                        )
+                        .then(([row]) => {
+                            return user
+                        })
+            } else {
+                return Promise.resolve(user)
+            }
         })
 }
 
@@ -29,10 +42,11 @@ function _getUserProfileById(id) {
     return promisePool
         .getPool()
         .query(
-            "SELECT user.*, skill.name skill_name "
+            "SELECT user.*, skill.name skill_name, issuer.web_page webPage, issuer.ec_public_key ecPublicKey "
             + "FROM user "
-            + "LEFT JOIN user_skill on user.id = user.id "
+            + "LEFT JOIN user_skill on user.id = user_skill.user_id "
             + "LEFT JOIN skill on user_skill.skill_id = skill.id "
+            + "LEFT JOIN issuer on user.id = issuer.id "
             + "WHERE user.id = ?",
             [id]
         )

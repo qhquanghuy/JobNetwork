@@ -15,7 +15,6 @@ const Signup = ({
 	updateEmail,
 	updatePassword,
 	updateReytypePassword,
-	success,
 	role
 }) => (
 	<SignupComponent
@@ -24,7 +23,6 @@ const Signup = ({
 		updateEmail={ updateEmail }
 		updatePassword={ updatePassword }
 		updateReytypePassword={ updateReytypePassword }
-		success={ success }
 		role = { role }
 	/>
 );

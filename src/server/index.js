@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 app.use(cors())
 
 app.use(function(req, res, next) {
-	if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Beaer') {
+	if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
 		jwt.verify(req.headers.authorization.split(' ')[1], secret, function(err, decode) {
 			if (err) req.user = undefined;
 			req.user = decode;

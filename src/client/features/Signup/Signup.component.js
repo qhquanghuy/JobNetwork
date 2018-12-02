@@ -8,8 +8,7 @@ const Signup = ({
 	updatePassword,
 	updateRetypePassword,
 	updateRole,
-	role,
-	success
+	role
 }) => (
 	<form onSubmit={ handleSubmit }>
 		<h3>Sign up</h3>
