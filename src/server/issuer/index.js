@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Sunday, 2nd December 2018 4:20:24 pm
+ * Last Modified: Monday, 3rd December 2018 12:13:42 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -20,8 +20,27 @@ const jwt = require('jsonwebtoken');
 const { getUserProfileById } = require('./../user/user-dao')
 const { createIssuerMember, createCert } = require('./issuer-dao')
 const { ServerError } = require('./../helper/server-error')
-const { secret, userRole } = require('./../helper/constant')
 const { prop } = require('ramda')
+const MerkleTree = require('merkletreejs')
+const stringify = require('json-stable-stringify')
+const fetch = require('node-fetch');
+const Bluebird = require('bluebird');
+ 
+fetch.Promise = Bluebird;
+
+const { 
+	secret, 
+	es256Private, 
+	es256Public, 
+	ropstenId, 
+	ethBaseGasLimit, 
+	ethGasPricePerByte,
+	ropstenInfuraApi,
+    burnAddress,
+    userRole
+} = require('./../helper/constant')
+const hash = require('hash.js')
+const Web3 = require('web3');
 
 router.post("/verifymember", (req, res) => {
     const encodedData = req.body.encoded
@@ -76,21 +95,107 @@ router.post("/publishcert", (req, res) => {
     }
 })
 
+function sha256(data) {
+	// returns Buffer
+	return Buffer.from(hash.sha256().update(data).digest())
+}
 
+/**
+ * {
+        issuedOn: ....
+        cert: {
+            id: ...
+            title:...
+            description:...
+            icon:...
+            createdAt:...
+        },
+        issuer: {
+            id:...
+            email:....
+            name:...
+            webPage:....
+            address:...
+            revocationList:...
+        },
+        recipientProfile: {
+            id:...
+            email:...
+            name:...
+        },
+        signature: {
+            txHash:...
+            targetHash:...
+            merkleRoot:...
+            proofs: [
+                {
 
-router.post("/publishcert", (req, res) => {
-    if (req.user && req.user.role === userRole.issuer) {
-        const cert = {
-            issuerId: req.user.id,
-            title: req.body.title,
-            description: req.body.description,
-            badgeIcon: req.body.badgeIcon
+                }
+            ]
         }
-        createCert(cert)
-            .then(() => {
-                res.sendStatus(200)
+
+    }
+*/
+function createRawTx(web3, data, nonce) {
+    return {
+        nonce: web3.utils.toHex(nonce),
+        gasPrice: web3.utils.toHex(55e9),
+        gasLimit: web3.utils.toHex(ethBaseGasLimit + ethGasPricePerByte * data.length),
+        to: burnAddress,
+        value: '0x00',
+        data: '0x' + data.toString('hex'),
+        chainId: ropstenId
+    }
+}
+
+router.post("/cert/publish", (req, res) => {
+    if (req.user && req.user.role === userRole.issuer) {
+        const leaves = req.body.certs.map(cert => sha256(stringify(cert)))
+        const tree = new MerkleTree(leaves, sha256)
+        const buffer = tree.getRoot();
+        const web3 = new Web3(new Web3.providers.HttpProvider(ropstenInfuraApi));
+        web3.eth.getTransactionCount(req.body.certs[0].issuer.address)
+            .then((count) => {
+                return createRawTx(web3, buffer, count)
             })
-            .catch(err => console.log(err))
+            .then((txData) => {
+                console.log(txData)
+                const body = jwt.sign(txData, es256Private, {algorithm: "ES256"})
+                return fetch(req.body.certs[0].issuer.webPage + "/eth/sign", {
+                    method: 'post',
+                    body: JSON.stringify({token: body}),
+                    headers: { 'Content-Type': 'application/json' },
+                })
+            })
+            .then(res => res.json())
+            .then(data => '0x' + data.signed)
+            .then((signedTx) => web3.eth.sendSignedTransaction(signedTx))
+            .then((resTx) => {
+                return req.body.certs.map((cert, idx) => {
+                    const leaf = leaves[idx]
+                    return {
+                        ...cert,
+                        signature: {
+                            txHash: resTx.transactionHash,
+                            targetHash: leaf.toString('hex'),
+                            merkleRoot: buffer.toString('hex'),
+                            proofs: tree.getProof(leaf).map(proof => {
+                                return {
+                                    ...proof,
+                                    data: proof.data.toString('hex')
+                                }
+                            })
+                        }
+                    }
+                })
+            })
+            .then(publisedCert => {
+                res.send({publisedCerts: publisedCert})
+            })
+            .catch((err) => {
+                console.log(err)
+                res.send("errr")
+            })
     } else {
         res.sendStatus(401)
     }
