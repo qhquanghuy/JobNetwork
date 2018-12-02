@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Sunday, 2nd December 2018 1:08:00 pm
+ * Last Modified: Sunday, 2nd December 2018 4:20:24 pm
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -18,7 +18,7 @@ const router = express.Router();
 const { idWithLog } = require('./../helper/functions')
 const jwt = require('jsonwebtoken');
 const { getUserProfileById } = require('./../user/user-dao')
-const { createIssuerMember } = require('./issuer-dao')
+const { createIssuerMember, createCert } = require('./issuer-dao')
 const { ServerError } = require('./../helper/server-error')
 const { secret, userRole } = require('./../helper/constant')
 const { prop } = require('ramda')
@@ -56,4 +56,45 @@ router.post("/verifymember", (req, res) => {
     
 
 })
+
+
+router.post("/publishcert", (req, res) => {
+    if (req.user && req.user.role === userRole.issuer) {
+        const cert = {
+            issuerId: req.user.id,
+            title: req.body.title,
+            description: req.body.description,
+            badgeIcon: req.body.badgeIcon
+        }
+        createCert(cert)
+            .then(() => {
+                res.sendStatus(200)
+            })
+            .catch(err => console.log(err))
+    } else {
+        res.sendStatus(401)
+    }
+})
+
+
+
+router.post("/publishcert", (req, res) => {
+    if (req.user && req.user.role === userRole.issuer) {
+        const cert = {
+            issuerId: req.user.id,
+            title: req.body.title,
+            description: req.body.description,
+            badgeIcon: req.body.badgeIcon
+        }
+        createCert(cert)
+            .then(() => {
+                res.sendStatus(200)
+            })
+            .catch(err => console.log(err))
+    } else {
+        res.sendStatus(401)
+    }
+})
+
+
 module.exports = router;

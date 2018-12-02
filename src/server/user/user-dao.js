@@ -2,7 +2,7 @@
 const promisePool = require('../database/connection-pool')
 const hash = require('hash.js')
 const { idWithLog } = require('./../helper/functions')
-const { userRole } = require('./../helper/constant')
+const { userRole, requestedCertStatus } = require('./../helper/constant')
 function _createUser(user) {
     return promisePool
         .getPool()
@@ -51,8 +51,19 @@ function _getUserProfileById(id) {
             [id]
         )
 }
+
+function _createCertRequest(request) {
+    return promisePool
+        .getPool()
+        .query(
+            "INSERT INTO request_cert(published_cert_id, user_id, status) "
+            + "VALUES(?, ?, ?)",
+            [request.publishedCertId, request.userId, requestedCertStatus.pending]
+        )
+}
 module.exports = {
     createUser: _createUser,
     findUserByEmail: _findUserByEmail,
-    getUserProfileById: _getUserProfileById
+    getUserProfileById: _getUserProfileById,
+    createCertRequest: _createCertRequest
 }

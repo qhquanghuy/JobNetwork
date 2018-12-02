@@ -4,7 +4,7 @@
  * File Created: Sunday, 2nd December 2018 12:15:23 pm
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Sunday, 2nd December 2018 1:09:23 pm
+ * Last Modified: Sunday, 2nd December 2018 3:59:02 pm
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -32,6 +32,22 @@ function _createIssuerMember(issuerId, userId, issuerSysId) {
             })
 }
 
+
+function _createCert(cert) {
+    return promisePool
+            .getPool()
+            .query(
+                "INSERT INTO published_cert(issuer_id, description, title, badge_icon) "
+                + "VALUES (?, ?, ?, ?)",
+                [cert.issuerId, cert.description, cert.title, cert.badgeIcon]
+            )
+            .then(([row]) => {
+                return row.insertId
+            })
+}
+
+
 module.exports = {
-    createIssuerMember: _createIssuerMember
+    createIssuerMember: _createIssuerMember,
+    createCert: _createCert
 }

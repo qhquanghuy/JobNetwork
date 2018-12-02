@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 10:54:38 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Sunday, 2nd December 2018 8:15:11 am
+ * Last Modified: Sunday, 2nd December 2018 3:58:11 pm
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -39,7 +39,7 @@ CREATE TABLE `published_cert` (
 	`created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`description` varchar(500) NOT NULL,
 	`title` varchar(100) NOT NULL,
-	`badge_icon` varchar(200),
+	`badge_icon` TEXT,
 	PRIMARY KEY (`id`)
 );
 

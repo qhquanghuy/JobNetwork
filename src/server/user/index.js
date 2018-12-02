@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Sunday, 2nd December 2018 12:30:38 pm
+ * Last Modified: Sunday, 2nd December 2018 4:07:15 pm
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -17,7 +17,7 @@ const express = require('express');
 const router = express.Router();
 const { idWithLog, clean } = require('./../helper/functions')
 const jwt = require('jsonwebtoken');
-const { createUser, findUserByEmail, getUserProfileById } = require('./user-dao')
+const { createUser, findUserByEmail, getUserProfileById, createCertRequest } = require('./user-dao')
 const { ServerError } = require('./../helper/server-error')
 const { secret, userRole } = require('./../helper/constant')
 const { prop } = require('ramda')
@@ -99,5 +99,20 @@ router.get("/request/issuer/:id", (req, res) => {
     
 })
 
+
+router.post("/request/cert/:publishedCertId", (req, res) => {
+    if(req.user) {
+        const request = {
+            publishedCertId: req.params.publishedCertId,
+            userId: req.user.id
+        }
+        createCertRequest(request)
+            .then(([row]) => {
+                res.sendStatus(200)
+            })
+    } else {
+        res.sendStatus(401)
+    }
+})
 
 module.exports = router;
