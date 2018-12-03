@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 10:54:38 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Sunday, 2nd December 2018 3:58:11 pm
+ * Last Modified: Monday, 3rd December 2018 8:12:11 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -48,6 +48,7 @@ CREATE TABLE `request_cert` (
 	`user_id` INT NOT NULL,
 	`created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	`status` INT NOT NULL,
+	`cert_json` MEDIUMTEXT,
 	PRIMARY KEY (`published_cert_id`,`user_id`)
 );
 

@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Monday, 3rd December 2018 12:13:42 am
+ * Last Modified: Monday, 3rd December 2018 9:11:45 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -15,12 +15,10 @@
 
 const express = require('express');
 const router = express.Router();
-const { idWithLog } = require('./../helper/functions')
+const { sha256 } = require('./../helper/functions')
 const jwt = require('jsonwebtoken');
 const { getUserProfileById } = require('./../user/user-dao')
-const { createIssuerMember, createCert } = require('./issuer-dao')
-const { ServerError } = require('./../helper/server-error')
-const { prop } = require('ramda')
+const { createIssuerMember, createCert, updateSuccessCert } = require('./issuer-dao')
 const MerkleTree = require('merkletreejs')
 const stringify = require('json-stable-stringify')
 const fetch = require('node-fetch');
@@ -39,7 +37,7 @@ const {
     burnAddress,
     userRole
 } = require('./../helper/constant')
-const hash = require('hash.js')
+
 const Web3 = require('web3');
 
 router.post("/verifymember", (req, res) => {
@@ -77,7 +75,7 @@ router.post("/verifymember", (req, res) => {
 })
 
 
-router.post("/publishcert", (req, res) => {
+router.post("/cert/issue", (req, res) => {
     if (req.user && req.user.role === userRole.issuer) {
         const cert = {
             issuerId: req.user.id,
@@ -94,12 +92,6 @@ router.post("/publishcert", (req, res) => {
         res.sendStatus(401)
     }
 })
-
-function sha256(data) {
-	// returns Buffer
-	return Buffer.from(hash.sha256().update(data).digest())
-}
-
 /**
  * {
         issuedOn: ....
@@ -190,11 +182,15 @@ router.post("/cert/publish", (req, res) => {
                 })
             })
             .then(publisedCert => {
-                res.send({publisedCerts: publisedCert})
+                return updateSuccessCert(publisedCert)
+            })
+            .then((some) => {
+                console.log(some)
+                res.sendStatus(200)
             })
             .catch((err) => {
                 console.log(err)
-                res.send("errr")
+                res.sendStatus(500)
             })
     } else {
         res.sendStatus(401)
