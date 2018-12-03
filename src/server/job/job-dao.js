@@ -57,7 +57,46 @@ function _createApplyJob(userId, jobId) {
                 )
             })
 }
+
+
+function _getJobs() {
+    return promisePool
+        .getPool()
+        .query(
+            "SELECT job.*, user.name employerName FROM job "
+            + "INNER JOIN user ON job.user_id = user.id "
+            + "ORDER BY created_at DESC "
+        )
+}
+
+
+function _getJobsOf(userId) {
+    return promisePool
+        .getPool()
+        .query(
+            "SELECT job.* FROM job "
+            + "INNER JOIN user ON job.user_id = user.id "
+            + "WHERE user_id = ? "
+            + "ORDER BY created_at DESC ",
+            [userId]
+        )
+}
+
+function _getApplicants(jobId) {
+    return promisePool
+        .getPool()
+        .query(
+            "SELECT user.* FROM apply_job "
+            + "INNER JOIN user ON apply_job.user_id = user.id "
+            + "WHERE apply_job.job_id = ? "
+            [jobId]
+        )
+}
+
 module.exports = {
     createJob: _createJob,
-    createApplyJob: _createApplyJob
+    createApplyJob: _createApplyJob,
+    getJobs: _getJobs,
+    getJobsOf: _getJobsOf,
+    getApplicants: _getApplicants
 }

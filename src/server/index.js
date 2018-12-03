@@ -13,19 +13,20 @@ const MerkleTree = require('merkletreejs')
 const stringify = require('json-stable-stringify')
 const fetch = require('node-fetch');
 const Bluebird = require('bluebird');
- 
+
+const {getCerts} = require('./issuer/issuer-dao')
+const {getJobsOf, getJobs } = require('./job/job-dao')
+const {getUserProfileById} = require('./user/user-dao')
+const { ServerError } = require('./helper/server-error')
+const { prop } = require('ramda')
+const { clean } = require('./helper/functions')
 fetch.Promise = Bluebird;
 
 const { 
 	secret, 
-	es256Private, 
-	es256Public, 
-	ropstenId, 
-	ethBaseGasLimit, 
-	ethGasPricePerByte,
 	ropstenInfuraApi,
-    burnAddress,
-    userRole
+	userRole,
+	requestedCertStatus
 } = require('./helper/constant')
 
 const Web3 = require('web3');
@@ -111,6 +112,59 @@ app.post('/api/cert/verify', (req, res) => {
 			res.send({isValid: isValid})
 		})
 		.catch(err => res.sendStatus(500))
+})
+
+
+app.get("/api/jobs", (req, res) => {
+    getJobs()
+        .then(([rows]) => {
+            res.send({jobs: rows})
+        })
+        .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+})
+
+
+app.get("/api/users/:id", (req, res) => {
+    getUserProfileById(req.params.id)
+        .then(([rows]) => {
+            if (rows[0]) {
+                delete rows[0].password_hash
+                
+                let userProfile = rows[0]
+                if(rows[0].skill_name) {
+                    userProfile.skills = rows.map(prop('skill_name'))
+                    
+                }
+
+                clean(userProfile)
+                delete rows[0].skill_name
+                res.send(userProfile)
+            } else {
+                throw new ServerError("User is not exist!", 403)
+            }
+            
+        })
+        .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+})
+
+app.get("/api/employers/:id/jobs", (req, res) => {
+    getJobsOf(req.params.id)
+        .then(([rows]) => {
+            res.send({jobs: rows})
+        })
+        .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+})
+
+app.get("/api/issuers/:id/certs", (req, res) => {
+    getCerts(req.params.id)
+            .then(([rows]) => {
+                rows.forEach(row => {
+                    delete row.password_hash
+                    row.status = row.status === requestedCertStatus.pending ? "pending" : requestedCertStatus.approved ? "approved" : "rejected"
+                });
+                res.send({certs: rows})
+            })
+            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
 })
 
 app.get('*', (req, res) => {

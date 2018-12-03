@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Monday, 3rd December 2018 11:07:08 pm
+ * Last Modified: Tuesday, 4th December 2018 1:10:00 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -15,36 +15,11 @@
 
 const express = require('express');
 const router = express.Router();
-const { idWithLog, clean } = require('./../helper/functions')
 const jwt = require('jsonwebtoken');
 const { createUser, findUserByEmail, getUserProfileById, createCertRequest } = require('./user-dao')
-const { ServerError } = require('./../helper/server-error')
+const { getApplicants, createJob } = require('./../job/job-dao')
 const { secret, userRole } = require('./../helper/constant')
-const { prop } = require('ramda')
 
-router.get("/", (req, res) => {
-    console.log(req)
-    getUserProfileById(req.user.id)
-        .then(([rows]) => {
-            if (rows[0]) {
-                delete rows[0].password_hash
-                
-                let userProfile = rows[0]
-                if(rows[0].skill_name) {
-                    userProfile.skills = rows.map(prop('skill_name'))
-                    
-                }
-
-                clean(userProfile)
-                delete rows[0].skill_name
-                res.send(userProfile)
-            } else {
-                throw ServerError("User is not exist!", 403)
-            }
-            
-        })
-        .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
-})
 
 router.post("/signup", (req, res) => {
     createUser(req.body)
@@ -71,7 +46,7 @@ router.post("/signin", (req, res) => {
         )
 })
 
-
+//request member of issuer
 router.get("/request/issuer/:id", (req, res) => {
     if (req.user) {
         const data = {
@@ -100,7 +75,7 @@ router.get("/request/issuer/:id", (req, res) => {
     
 })
 
-
+//requets cert
 router.post("/request/cert/:publishedCertId", (req, res) => {
     if(req.user) {
         const request = {
@@ -116,5 +91,53 @@ router.post("/request/cert/:publishedCertId", (req, res) => {
         res.sendStatus(401)
     }
 })
+
+//get applicants of a job from employer
+router.get("/jobs/:id/applicants", (req, res) => {
+    if (req.user && req.user.role === userRole.employer) {
+        getApplicants(req.params.id)
+            .then(([rows]) => {
+                rows.forEach(row => {
+                    delete row.password_hash
+                });
+                res.send({applicants: rows})
+            })
+            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+
+    } else {
+        res.sendStatus(401)
+    }
+})
+
+
+//employer create job
+router.post("/jobs", (req, res) => {
+    if (req.user && req.user.role === userRole.employer) {
+        req.body.job.userId = req.user.id
+        createJob(req.body.job)
+            .then(() => {
+                res.sendStatus(200)
+            })
+            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+    } else {
+        res.sendStatus(401)
+    }
+})
+
+//user apply a job
+router.post("/jobs/:jobId/apply", (req, res) => {
+    if (req.user && req.user.role === userRole.user) {
+        createApplyJob(req.user.id, req.params.jobId)
+            .then(() => {
+                res.sendStatus(200)
+            })
+            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+    } else {
+        res.sendStatus(401)
+    }
+})
+
+
+
 
 module.exports = router;

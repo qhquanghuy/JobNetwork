@@ -61,6 +61,8 @@ function _createCertRequest(request) {
             [request.publishedCertId, request.userId, requestedCertStatus.pending]
         )
 }
+
+
 module.exports = {
     createUser: _createUser,
     findUserByEmail: _findUserByEmail,

@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Monday, 3rd December 2018 11:08:17 pm
+ * Last Modified: Tuesday, 4th December 2018 12:49:44 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -18,7 +18,7 @@ const router = express.Router();
 const { sha256 } = require('./../helper/functions')
 const jwt = require('jsonwebtoken');
 const { getUserProfileById } = require('./../user/user-dao')
-const { createIssuerMember, createCert, updateSuccessCert } = require('./issuer-dao')
+const { createIssuerMember, createCert, updateSuccessCert, getCertRequests } = require('./issuer-dao')
 const MerkleTree = require('merkletreejs')
 const stringify = require('json-stable-stringify')
 const fetch = require('node-fetch');
@@ -35,7 +35,8 @@ const {
 	ethGasPricePerByte,
 	ropstenInfuraApi,
     burnAddress,
-    userRole
+    userRole,
+    requestedCertStatus
 } = require('./../helper/constant')
 
 const Web3 = require('web3');
@@ -193,6 +194,24 @@ router.post("/cert/publish", (req, res) => {
                 console.log(err)
                 res.sendStatus(500)
             })
+    } else {
+        res.sendStatus(401)
+    }
+})
+
+
+
+router.get("/certs/:id/requests", (req, res) => {
+    if (req.user && req.user.role === userRole.issuer) {
+        getCertRequests(req.params.id)
+            .then(([rows]) => {
+                rows.forEach(row => {
+                    delete row.password_hash
+                    row.status = row.status === requestedCertStatus.pending ? "pending" : requestedCertStatus.approved ? "approved" : "rejected"
+                });
+                res.send({requests: rows})
+            })
+            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
     } else {
         res.sendStatus(401)
     }
