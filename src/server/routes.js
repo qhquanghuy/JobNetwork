@@ -5,7 +5,9 @@ const router = express.Router();
 
 const userRoute = require('./user');
 const issuerRoute = require('./issuer');
+const jobRoute = require('./job');
 // SAMPLE ROUTE
 router.use('/user', userRoute);
 router.use('/issuer', issuerRoute);
+router.use('/job', jobRoute);
 module.exports = router;
