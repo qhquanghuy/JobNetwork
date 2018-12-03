@@ -62,10 +62,20 @@ function _createCertRequest(request) {
         )
 }
 
+function _getUsersLike(text) {
+    return promisePool
+        .getPool()
+        .query(
+            "SELECT * FROM user WHERE user.email LIKE ? ",
+            ["%" + text + "%"]
+        )
+}
+
 
 module.exports = {
     createUser: _createUser,
     findUserByEmail: _findUserByEmail,
     getUserProfileById: _getUserProfileById,
-    createCertRequest: _createCertRequest
+    createCertRequest: _createCertRequest,
+    getUsersLike: _getUsersLike
 }

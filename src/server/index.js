@@ -16,7 +16,7 @@ const Bluebird = require('bluebird');
 
 const {getCerts, getCertsOfUser} = require('./issuer/issuer-dao')
 const {getJobsOf, getJobs, getAppliedJobsOf } = require('./job/job-dao')
-const {getUserProfileById} = require('./user/user-dao')
+const {getUserProfileById, getUsersLike} = require('./user/user-dao')
 const { ServerError } = require('./helper/server-error')
 const { prop } = require('ramda')
 const { clean } = require('./helper/functions')
@@ -182,15 +182,27 @@ app.get("/api/employers/:id/jobs", (req, res) => {
 
 app.get("/api/issuers/:id/certs", (req, res) => {
     getCerts(req.params.id)
-            .then(([rows]) => {
-                rows.forEach(row => {
-                    delete row.password_hash
-                    row.status = row.status === requestedCertStatus.pending ? "pending" : requestedCertStatus.approved ? "approved" : "rejected"
-                });
-                res.send({certs: rows})
-            })
-            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+		.then(([rows]) => {
+			rows.forEach(row => {
+				delete row.password_hash
+				row.status = row.status === requestedCertStatus.pending ? "pending" : requestedCertStatus.approved ? "approved" : "rejected"
+			});
+			res.send({certs: rows})
+		})
+		.catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
 })
+
+app.get("/api/users/search/:text", (req, res) => {
+    getUsersLike(req.params.text)
+		.then(([rows]) => {
+			rows.forEach(row => {
+				delete row.password_hash
+			});
+			res.send({users: rows})
+		})
+		.catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+})
+
 
 app.get('*', (req, res) => {
 	res.sendFile(join(__dirname, '../../public/index.html'));
