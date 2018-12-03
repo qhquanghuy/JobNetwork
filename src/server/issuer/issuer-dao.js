@@ -4,7 +4,7 @@
  * File Created: Sunday, 2nd December 2018 12:15:23 pm
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Tuesday, 4th December 2018 12:52:34 am
+ * Last Modified: Tuesday, 4th December 2018 1:25:27 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -95,12 +95,23 @@ function _getCerts(issuerId) {
 }
 
 
-
+function _getCertsOfUser(userId) {
+    return promisePool
+        .getPool()
+        .query(
+            "SELECT request_cert.*, published_cert.title, published_cert.description, published_cert.badge_icon FROM request_cert "
+            + "INNER JOIN published_cert ON request_cert.published_cert_id = published_cert.id "
+            +"WHERE request_cert.user_id = ? "
+            + "ORDER BY request_cert.created_at ",
+            [userId]
+        )
+}
 
 module.exports = {
     createIssuerMember: _createIssuerMember,
     createCert: _createCert,
     updateSuccessCert: _updateSuccessCert,
     getCertRequests: _getCertRequests,
-    getCerts: _getCerts
+    getCerts: _getCerts,
+    getCertsOfUser: _getCertsOfUser
 }

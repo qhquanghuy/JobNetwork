@@ -14,8 +14,8 @@ const stringify = require('json-stable-stringify')
 const fetch = require('node-fetch');
 const Bluebird = require('bluebird');
 
-const {getCerts} = require('./issuer/issuer-dao')
-const {getJobsOf, getJobs } = require('./job/job-dao')
+const {getCerts, getCertsOfUser} = require('./issuer/issuer-dao')
+const {getJobsOf, getJobs, getAppliedJobsOf } = require('./job/job-dao')
 const {getUserProfileById} = require('./user/user-dao')
 const { ServerError } = require('./helper/server-error')
 const { prop } = require('ramda')
@@ -26,6 +26,7 @@ const {
 	secret, 
 	ropstenInfuraApi,
 	userRole,
+	appliedJobStatus,
 	requestedCertStatus
 } = require('./helper/constant')
 
@@ -123,6 +124,30 @@ app.get("/api/jobs", (req, res) => {
         .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
 })
 
+app.get("/api/users/:id/certs", (req, res) => {
+	getCertsOfUser(req.params.id)
+		.then(([rows]) => {
+			rows.forEach(row => {
+				row.blockCert = JSON.parse(row.cert_json)
+				delete row.cert_json
+				row.status = row.status === requestedCertStatus.pending ? "pending" : requestedCertStatus.approved ? "approved" : "rejected"
+			})
+			res.send({certs: rows})
+		})
+		.catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+}) 
+
+app.get("/api/users/:id/jobs", (req, res) => {
+	getAppliedJobsOf(req.params.id)
+		.then(([rows]) => {
+			rows.forEach(row => {
+				delete row.id
+				row.status = row.status === appliedJobStatus.pending ? "pending" : appliedJobStatus.approved ? "approved" : "rejected"
+			})
+			res.send({jobs: rows})
+		})
+		.catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+}) 
 
 app.get("/api/users/:id", (req, res) => {
     getUserProfileById(req.params.id)

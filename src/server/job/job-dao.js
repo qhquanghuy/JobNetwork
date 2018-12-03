@@ -1,8 +1,7 @@
 
 const promisePool = require('../database/connection-pool')
 const hash = require('hash.js')
-const { idWithLog } = require('../helper/functions')
-const { userRole, appliedJobStatus } = require('../helper/constant')
+const { appliedJobStatus } = require('../helper/constant')
 
 function _createJob(job) {
     return promisePool
@@ -93,10 +92,24 @@ function _getApplicants(jobId) {
         )
 }
 
+
+function _getAppliedJobsOf(userId) {
+    return promisePool
+        .getPool()
+        .query(
+            "SELECT job.*, apply_job.status, apply_job.job_id FROM apply_job "
+            + "INNER JOIN job ON job.id = apply_job.job_id "
+            + "WHERE apply_job.user_id = ? "
+            + "ORDER BY created_at DESC ",
+            [userId]
+        )
+}
+
 module.exports = {
     createJob: _createJob,
     createApplyJob: _createApplyJob,
     getJobs: _getJobs,
     getJobsOf: _getJobsOf,
-    getApplicants: _getApplicants
+    getApplicants: _getApplicants,
+    getAppliedJobsOf: _getAppliedJobsOf
 }
