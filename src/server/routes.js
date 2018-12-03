@@ -9,5 +9,5 @@ const jobRoute = require('./job');
 // SAMPLE ROUTE
 router.use('/user', userRoute);
 router.use('/issuer', issuerRoute);
-router.use('/jobs', jobRoute);
+router.use('/job', jobRoute);
 module.exports = router;
