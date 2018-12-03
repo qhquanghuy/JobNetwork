@@ -47,6 +47,15 @@ function _createApplyJob(userId, jobId) {
             + "VALUES(?, ?, ?)",
             [userId, jobId, appliedJobStatus.pending]
         )
+        .then(() => {
+            promisePool
+                .getPool()
+                .query(
+                    "UPDATE job SET applicants = IFNULL(applicants, 0) + 1 "
+                    + "WHERE id = ?",
+                    [jobId]
+                )
+            })
 }
 module.exports = {
     createJob: _createJob,

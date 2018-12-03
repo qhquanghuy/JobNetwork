@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Sunday, 2nd December 2018 4:07:15 pm
+ * Last Modified: Monday, 3rd December 2018 11:07:08 pm
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -93,6 +93,7 @@ router.get("/request/issuer/:id", (req, res) => {
                 }
                 
             })
+            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
     } else {
         res.sendStatus(401)
     }
@@ -110,6 +111,7 @@ router.post("/request/cert/:publishedCertId", (req, res) => {
             .then(([row]) => {
                 res.sendStatus(200)
             })
+            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
     } else {
         res.sendStatus(401)
     }

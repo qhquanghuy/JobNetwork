@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Monday, 3rd December 2018 10:54:20 am
+ * Last Modified: Monday, 3rd December 2018 11:07:41 pm
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -27,7 +27,7 @@ router.post("/", (req, res) => {
             .then(() => {
                 res.sendStatus(200)
             })
-            .catch(err => console.log(err))
+            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
     } else {
         res.sendStatus(401)
     }
@@ -41,7 +41,7 @@ router.post("/", (req, res) => {
             .then(() => {
                 res.sendStatus(200)
             })
-            .catch(err => console.log(err))
+            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
     } else {
         res.sendStatus(401)
     }
@@ -53,7 +53,7 @@ router.post("/apply", (req, res) => {
             .then(() => {
                 res.sendStatus(200)
             })
-            .catch(err => console.log(err))
+            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
     } else {
         res.sendStatus(401)
     }
