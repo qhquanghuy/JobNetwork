@@ -37,6 +37,18 @@ function _createJob(job) {
                 })
         })
 }
+
+
+function _createApplyJob(userId, jobId) {
+    return promisePool
+        .getPool()
+        .query(
+            "INSERT INTO apply_job(user_id, job_id, status) "
+            + "VALUES(?, ?, ?)",
+            [userId, jobId, appliedJobStatus.pending]
+        )
+}
 module.exports = {
-    createJob: _createJob
+    createJob: _createJob,
+    createApplyJob: _createApplyJob
 }
