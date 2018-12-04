@@ -73,20 +73,23 @@ function checkTargetHash(cert) {
 }
 
 function checkProof(cert) {
-	const merkleRoot = Buffer.from(cert.signature.merkleRoot, 'hex')
-	const targetHash = getHash(cert)
 
-	const proofs = cert.signature.proofs.map((proof) => {
-		return {
-			...proof,
-			data: Buffer.from(proof.data, 'hex')
-		}
-	})
-
-	const tree = new MerkleTree([], sha256)
-
-
-	return tree.verify(proofs, targetHash, merkleRoot)
+	if (cert.signature.proofs.length === 0) {
+		return cert.signature.merkleRoot === cert.signature.targetHash
+	} else {
+		const merkleRoot = Buffer.from(cert.signature.merkleRoot, 'hex')
+		const targetHash = getHash(cert)
+	
+		const proofs = cert.signature.proofs.map((proof) => {
+			return {
+				...proof,
+				data: Buffer.from(proof.data, 'hex')
+			}
+		})
+	
+		const tree = new MerkleTree([], sha256)
+		return tree.verify(proofs, targetHash, merkleRoot)
+	}
 }
 
 function checkIssuerAddress(cert, tx) {

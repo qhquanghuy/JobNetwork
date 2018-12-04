@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Tuesday, 4th December 2018 12:49:44 am
+ * Last Modified: Tuesday, 4th December 2018 9:29:04 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -77,7 +77,7 @@ router.post("/verifymember", (req, res) => {
 })
 
 
-router.post("/cert/issue", (req, res) => {
+router.post("/certs", (req, res) => {
     if (req.user && req.user.role === userRole.issuer) {
         const cert = {
             issuerId: req.user.id,
@@ -142,7 +142,7 @@ function createRawTx(web3, data, nonce) {
     }
 }
 
-router.post("/cert/publish", (req, res) => {
+router.post("/certs/publish", (req, res) => {
     if (req.user && req.user.role === userRole.issuer) {
         const leaves = req.body.certs.map(cert => sha256(stringify(cert)))
         const tree = new MerkleTree(leaves, sha256)

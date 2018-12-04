@@ -4,7 +4,7 @@
  * File Created: Sunday, 2nd December 2018 12:15:23 pm
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Tuesday, 4th December 2018 1:25:27 am
+ * Last Modified: Tuesday, 4th December 2018 9:55:30 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -15,9 +15,7 @@
 
 
 const promisePool = require('../database/connection-pool')
-const hash = require('hash.js')
-const { idWithLog } = require('./../helper/functions')
-const { userRole, requestedCertStatus } = require('./../helper/constant')
+const { requestedCertStatus } = require('./../helper/constant')
 
 function _createIssuerMember(issuerId, userId, issuerSysId) {
     return promisePool

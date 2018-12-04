@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Tuesday, 4th December 2018 1:10:00 am
+ * Last Modified: Tuesday, 4th December 2018 10:04:07 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -76,7 +76,7 @@ router.get("/request/issuer/:id", (req, res) => {
 })
 
 //requets cert
-router.post("/request/cert/:publishedCertId", (req, res) => {
+router.post("/certs/:publishedCertId/request", (req, res) => {
     if(req.user) {
         const request = {
             publishedCertId: req.params.publishedCertId,
