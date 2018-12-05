@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Tuesday, 4th December 2018 9:29:04 am
+ * Last Modified: Wednesday, 5th December 2018 11:59:50 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -203,7 +203,7 @@ router.post("/certs/publish", (req, res) => {
 
 router.get("/certs/:id/requests", (req, res) => {
     if (req.user && req.user.role === userRole.issuer) {
-        getCertRequests(req.params.id)
+        getCertRequests(req.params.id, req.user.id)
             .then(([rows]) => {
                 rows.forEach(row => {
                     delete row.password_hash

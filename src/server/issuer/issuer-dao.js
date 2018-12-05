@@ -4,7 +4,7 @@
  * File Created: Sunday, 2nd December 2018 12:15:23 pm
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Tuesday, 4th December 2018 9:55:30 am
+ * Last Modified: Wednesday, 5th December 2018 12:06:11 pm
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -70,15 +70,16 @@ function _updateSuccessCert(certs) {
 }
 
 
-function _getCertRequests(publishedCertId) {
+function _getCertRequests(publishedCertId, issuerId) {
     return promisePool
         .getPool()
         .query(
-            "SELECT user.*, request_cert.created_at, request_cert.status FROM request_cert "
+            "SELECT user.*, request_cert.created_at, request_cert.status, issuer_member.issuer_system_identifier FROM request_cert "
             + "INNER JOIN user ON request_cert.user_id = user.id "
-            + "WHERE published_cert_id = ? "
+            + "INNER JOIN issuer_member ON request_cert.user_id = issuer_member.user_id "
+            + "WHERE published_cert_id = ? AND issuer_member.issuer_id = ? "
             + "ORDER BY request_cert.created_at DESC ",
-            [publishedCertId]
+            [publishedCertId, issuerId]
         )
 }
 
