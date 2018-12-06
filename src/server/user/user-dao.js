@@ -52,6 +52,16 @@ function _getUserProfileById(id) {
         )
 }
 
+function _checkIssuerMember(issuerId, userId) {
+    return promisePool
+        .getPool()
+        .query(
+            "SELECT * FROM issuer_member WHERE issuer_member.issuer_id = ? AND issuer_member.user_id = ? ",
+            [issuerId, userId]
+        )
+    
+}
+
 function _createCertRequest(request) {
     return promisePool
         .getPool()
@@ -76,6 +86,7 @@ module.exports = {
     createUser: _createUser,
     findUserByEmail: _findUserByEmail,
     getUserProfileById: _getUserProfileById,
+    checkIssuerMember: _checkIssuerMember,
     createCertRequest: _createCertRequest,
     getUsersLike: _getUsersLike
 }

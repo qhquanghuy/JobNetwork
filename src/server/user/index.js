@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Tuesday, 4th December 2018 10:04:07 am
+ * Last Modified: Thursday, 6th December 2018 10:19:13 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -16,7 +16,7 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const { createUser, findUserByEmail, getUserProfileById, createCertRequest } = require('./user-dao')
+const { createUser, findUserByEmail, getUserProfileById, createCertRequest, checkIssuerMember } = require('./user-dao')
 const { getApplicants, createJob } = require('./../job/job-dao')
 const { secret, userRole } = require('./../helper/constant')
 
@@ -77,14 +77,28 @@ router.get("/request/issuer/:id", (req, res) => {
 
 //requets cert
 router.post("/certs/:publishedCertId/request", (req, res) => {
-    if(req.user) {
-        const request = {
-            publishedCertId: req.params.publishedCertId,
-            userId: req.user.id
-        }
-        createCertRequest(request)
-            .then(([row]) => {
-                res.sendStatus(200)
+    if(req.user && req.body.issuerId !== req.user.id) {
+        checkIssuerMember(req.body.issuerId, req.user.id)
+            .then(([rows]) => {
+                if (rows.length > 0) {
+                    return true
+                } else {
+                    return false
+                }
+            })
+            .then(isMember => {
+                if (isMember) {
+                    const request = {
+                        publishedCertId: req.params.publishedCertId,
+                        userId: req.user.id
+                    }
+                    return createCertRequest(request)
+                            .then(() => {
+                                res.sendStatus(200)
+                            })
+                } else {
+                    res.status(400).send({error: "user is not member of issuer"})
+                }
             })
             .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
     } else {
