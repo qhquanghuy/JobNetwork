@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Thursday, 6th December 2018 10:19:13 am
+ * Last Modified: Wednesday, 19th December 2018 8:16:16 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -47,11 +47,11 @@ router.post("/signin", (req, res) => {
 })
 
 //request member of issuer
-router.get("/request/issuer/:id", (req, res) => {
+router.post("/member/request", (req, res) => {
     if (req.user) {
         const data = {
             userId: req.user.id,
-            issuerId: req.params.id
+            issuerId: req.body.issuerId
         }
 
         getUserProfileById(data.issuerId)
@@ -109,7 +109,6 @@ router.post("/certs/:publishedCertId/request", (req, res) => {
 //get applicants of a job from employer
 router.get("/jobs/:id/applicants", (req, res) => {
     if (req.user && req.user.role === userRole.employer) {
-        getApplicants(req.params.id)
             .then(([rows]) => {
                 rows.forEach(row => {
                     delete row.password_hash
