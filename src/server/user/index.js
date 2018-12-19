@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Wednesday, 19th December 2018 8:16:16 am
+ * Last Modified: Wednesday, 19th December 2018 8:16:49 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -109,6 +109,7 @@ router.post("/certs/:publishedCertId/request", (req, res) => {
 //get applicants of a job from employer
 router.get("/jobs/:id/applicants", (req, res) => {
     if (req.user && req.user.role === userRole.employer) {
+        getApplicants(req.user.id, req.params.id)
             .then(([rows]) => {
                 rows.forEach(row => {
                     delete row.password_hash
