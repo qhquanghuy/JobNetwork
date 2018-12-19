@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Wednesday, 19th December 2018 8:16:49 am
+ * Last Modified: Thursday, 20th December 2018 12:51:06 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -17,7 +17,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const { createUser, findUserByEmail, getUserProfileById, createCertRequest, checkIssuerMember } = require('./user-dao')
-const { getApplicants, createJob } = require('./../job/job-dao')
+const { getApplicants, createJob, createApplyJob } = require('./../job/job-dao')
 const { secret, userRole } = require('./../helper/constant')
 
 
@@ -31,7 +31,12 @@ router.post("/signin", (req, res) => {
     findUserByEmail(req.body.email, req.body.password)
         .then(([rows]) => {
             if(rows[0]) {
-                res.send({token: jwt.sign({id: rows[0].id, email: rows[0].email, role: rows[0].role }, secret) })
+                const data = {
+                    token: jwt.sign({id: rows[0].id, email: rows[0].email, role: rows[0].role }, secret),
+                    info: rows[0]
+
+                }
+                res.send({user: data})
             } else {
                 res.status(401).send({message: "email or password is incorrect!"})
             }

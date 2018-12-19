@@ -1,18 +1,3 @@
-/*
- * File: job_network_dump.sql
- * Project: simple-react-full-stack
- * File Created: Tuesday, 4th December 2018 10:21:23 am
- * Author: huynguyen (qhquanghuy96@gmail.com)
- * -----
- * Last Modified: Tuesday, 4th December 2018 10:21:24 am
- * Modified By: huynguyen (qhquanghuy96@gmail.com)
- * -----
- */
-
-
-
-
-
 -- MySQL dump 10.13  Distrib 5.7.20, for macos10.12 (x86_64)
 --
 -- Host: localhost    Database: job_network
@@ -55,7 +40,7 @@ CREATE TABLE `apply_job` (
 
 LOCK TABLES `apply_job` WRITE;
 /*!40000 ALTER TABLE `apply_job` DISABLE KEYS */;
-INSERT INTO `apply_job` VALUES (6,20,'2018-12-03 23:04:41',1);
+INSERT INTO `apply_job` VALUES (6,20,'2018-12-20 01:01:59',1),(7,20,'2018-12-20 01:01:53',1);
 /*!40000 ALTER TABLE `apply_job` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -81,7 +66,7 @@ CREATE TABLE `issuer` (
 
 LOCK TABLES `issuer` WRITE;
 /*!40000 ALTER TABLE `issuer` DISABLE KEYS */;
-INSERT INTO `issuer` VALUES (18,'http://localhost:9098','-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEj4WzWlRWj3JM3CMtlQ5u6UiBQUWZ\n7DX3IsbcUOYtDP0XqdxAp2JRJvxmpEdsM0YSDFJLV8kqq9wKahGtuPUJjw==\n-----END PUBLIC KEY-----');
+INSERT INTO `issuer` VALUES (18,'http://localhost:9098','-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEj4WzWlRWj3JM3CMtlQ5u6UiBQUWZ\n7DX3IsbcUOYtDP0XqdxAp2JRJvxmpEdsM0YSDFJLV8kqq9wKahGtuPUJjw==\n-----END PUBLIC KEY-----'),(22,'localhost:1111','-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAExNXBsZ3Kb2FxuF5EDFl2rPjCvrsE\nk1Pet+heIAguXR34jT9MeFQssgOx0E4T/vsjVSZ5MA4vDs/Ma8tu9ttHsA==\n-----END PUBLIC KEY-----');
 /*!40000 ALTER TABLE `issuer` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -110,7 +95,7 @@ CREATE TABLE `issuer_member` (
 
 LOCK TABLES `issuer_member` WRITE;
 /*!40000 ALTER TABLE `issuer_member` DISABLE KEYS */;
-INSERT INTO `issuer_member` VALUES (18,20,'2018-12-02 13:33:32','B14DCCN069');
+INSERT INTO `issuer_member` VALUES (18,20,'2018-12-02 13:33:32','B14DCCN069'),(22,20,'2018-12-08 00:47:33','qhquanghuy@gmail.com');
 /*!40000 ALTER TABLE `issuer_member` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -146,7 +131,7 @@ CREATE TABLE `job` (
 
 LOCK TABLES `job` WRITE;
 /*!40000 ALTER TABLE `job` DISABLE KEYS */;
-INSERT INTO `job` VALUES (6,21,10,'2019-02-01 00:00:00','2018-12-03 10:30:49','Nodejs Developer','experience: 2year+, salary:20m',1,NULL,NULL,'Ha noi','nodeJs|web development'),(7,21,5,'2019-03-01 00:00:00','2018-12-03 23:18:57','iOS Developer','experience: 2year+, salary:20m',NULL,NULL,NULL,'Ha noi','iOS|swift|mobile development');
+INSERT INTO `job` VALUES (6,21,10,'2019-02-01 00:00:00','2018-12-03 10:30:49','Nodejs Developer','experience: 2year+, salary:20m',1,NULL,NULL,'Ha noi','nodeJs|web development'),(7,21,5,'2019-03-01 00:00:00','2018-12-03 23:18:57','iOS Developer','experience: 2year+, salary:20m',1,NULL,NULL,'Ha noi','iOS|swift|mobile development');
 /*!40000 ALTER TABLE `job` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -338,7 +323,7 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `eth_address_UNIQUE` (`eth_address`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -347,7 +332,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (18,'ptit_issuer@ptit.edu.vn','bcb15f821479b4d5772bd0ca866c00ad5f926e3580720659cc80d39c9d09802a','ptit',NULL,NULL,'2018-12-02 11:15:24',NULL,3,NULL),(20,'qhquanghuy96@gmail.com','bcb15f821479b4d5772bd0ca866c00ad5f926e3580720659cc80d39c9d09802a','huy nguyen',NULL,NULL,'2018-12-02 11:17:34',NULL,1,NULL),(21,'joechen@gmail.com','bcb15f821479b4d5772bd0ca866c00ad5f926e3580720659cc80d39c9d09802a','joe chen',NULL,NULL,'2018-12-03 06:58:33',NULL,2,NULL);
+INSERT INTO `user` VALUES (18,'ptit_issuer@ptit.edu.vn','bcb15f821479b4d5772bd0ca866c00ad5f926e3580720659cc80d39c9d09802a','ptit',NULL,NULL,'2018-12-02 11:15:24',NULL,3,NULL),(20,'qhquanghuy96@gmail.com','bcb15f821479b4d5772bd0ca866c00ad5f926e3580720659cc80d39c9d09802a','huy nguyen',NULL,NULL,'2018-12-02 11:17:34',NULL,1,NULL),(21,'joechen@gmail.com','bcb15f821479b4d5772bd0ca866c00ad5f926e3580720659cc80d39c9d09802a','fpt software',NULL,NULL,'2018-12-03 06:58:33',NULL,2,NULL),(22,'languagelink_issuer@languagelink.com','bcb15f821479b4d5772bd0ca866c00ad5f926e3580720659cc80d39c9d09802a','ptit',NULL,NULL,'2018-12-08 00:46:00',NULL,3,NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -414,4 +399,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-12-04 10:20:39
+-- Dump completed on 2018-12-20  6:20:12
