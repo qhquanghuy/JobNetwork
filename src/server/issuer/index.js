@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Wednesday, 5th December 2018 11:59:50 am
+ * Last Modified: Friday, 21st December 2018 1:01:24 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -59,7 +59,7 @@ router.post("/verifymember", (req, res) => {
                             createIssuerMember(requestData.issuerId, requestData.userId, data.id)
                                 .then((id) => {
                                     console.log(id)
-                                    res.send({redirectUrl: "some url"})
+                                    res.send({redirectUrl: "http://localhost:3000/#/issuer-dashboard/" + requestData.issuerId})
                                 })
                         }
                     })
