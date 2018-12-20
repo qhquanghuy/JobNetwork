@@ -106,6 +106,7 @@ function _getCertsOfUser(userId) {
         )
 }
 
+
 module.exports = {
     createIssuerMember: _createIssuerMember,
     createCert: _createCert,

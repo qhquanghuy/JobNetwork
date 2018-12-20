@@ -16,7 +16,7 @@ const Bluebird = require('bluebird');
 
 const {getCerts, getCertsOfUser} = require('./issuer/issuer-dao')
 const {getJobsOf, getJobs, getAppliedJobsOf } = require('./job/job-dao')
-const {getUserProfileById, getUsersLike} = require('./user/user-dao')
+const {getUserProfileById, getUsersLike, checkIssuerMember} = require('./user/user-dao')
 const { ServerError } = require('./helper/server-error')
 const { prop } = require('ramda')
 const { clean } = require('./helper/functions')
@@ -206,6 +206,21 @@ app.get("/api/users/search/:text", (req, res) => {
 		.catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
 })
 
+app.get("/api/issuers/:id/members/check", (req, res) => {
+	if (req.user) {
+		checkIssuerMember(req.params.id, req.user.id)
+        .then(([rows]) => {
+			if (rows[0]) {
+				res.send({identifier: rows[0].issuer_system_identifier, memberedAt: rows[0].created_at})
+			} else {
+				res.sendStatus(400)
+			}
+        })
+	} else {
+		res.sendStatus(401)
+	}
+    
+})
 
 app.get('*', (req, res) => {
 	res.sendFile(join(__dirname, '../../public/index.html'));
