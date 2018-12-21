@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Thursday, 20th December 2018 12:51:06 am
+ * Last Modified: Friday, 21st December 2018 1:38:12 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -80,7 +80,7 @@ router.post("/member/request", (req, res) => {
     
 })
 
-//requets cert
+//request cert
 router.post("/certs/:publishedCertId/request", (req, res) => {
     if(req.user && req.body.issuerId !== req.user.id) {
         checkIssuerMember(req.body.issuerId, req.user.id)

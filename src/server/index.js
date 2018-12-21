@@ -184,7 +184,8 @@ app.get("/api/employers/:id/jobs", (req, res) => {
 })
 
 app.get("/api/issuers/:id/certs", (req, res) => {
-    getCerts(req.params.id)
+	const userId = req.user == undefined ? null : req.user.id
+    getCerts(userId, req.params.id)
 		.then(([rows]) => {
 			rows.forEach(row => {
 				delete row.password_hash

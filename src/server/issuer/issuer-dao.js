@@ -4,7 +4,7 @@
  * File Created: Sunday, 2nd December 2018 12:15:23 pm
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Wednesday, 5th December 2018 12:06:11 pm
+ * Last Modified: Friday, 21st December 2018 7:27:20 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -84,12 +84,19 @@ function _getCertRequests(publishedCertId, issuerId) {
 }
 
 
-function _getCerts(issuerId) {
+function _getCerts(userId, issuerId) {
     return promisePool
         .getPool()
         .query(
-            "SELECT * FROM published_cert WHERE issuer_id = ?",
-            [issuerId]
+            "SELECT published_cert.*, "
+            + "CASE "
+            + " WHEN request_cert.user_id = ? THEN 1 "
+            + " ELSE 0 "
+            + "END isRequested "
+            + "FROM published_cert "
+            + "LEFT JOIN request_cert ON published_cert.id = request_cert.published_cert_id "
+            + "WHERE issuer_id = ?",
+            [userId, issuerId]
         )
 }
 
