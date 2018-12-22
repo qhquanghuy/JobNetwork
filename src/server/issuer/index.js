@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Friday, 21st December 2018 1:01:24 am
+ * Last Modified: Saturday, 22nd December 2018 12:09:30 pm
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -23,17 +23,17 @@ const MerkleTree = require('merkletreejs')
 const stringify = require('json-stable-stringify')
 const fetch = require('node-fetch');
 const Bluebird = require('bluebird');
- 
+
 fetch.Promise = Bluebird;
 
-const { 
-	secret, 
-	es256Private, 
-	es256Public, 
-	ropstenId, 
-	ethBaseGasLimit, 
-	ethGasPricePerByte,
-	ropstenInfuraApi,
+const {
+    secret,
+    es256Private,
+    es256Public,
+    ropstenId,
+    ethBaseGasLimit,
+    ethGasPricePerByte,
+    ropstenInfuraApi,
     burnAddress,
     userRole,
     requestedCertStatus
@@ -50,7 +50,7 @@ router.post("/verifymember", (req, res) => {
             .then(([rows]) => {
                 if (rows[0]) {
                     const publicKey = rows[0].ecPublicKey
-                    jwt.verify(encodedData, publicKey, {algorithms: "ES256"}, (err, data) => {
+                    jwt.verify(encodedData, publicKey, { algorithms: "ES256" }, (err, data) => {
                         if (err) {
                             console.log(err)
                             res.sendStatus(401)
@@ -59,7 +59,7 @@ router.post("/verifymember", (req, res) => {
                             createIssuerMember(requestData.issuerId, requestData.userId, data.id)
                                 .then((id) => {
                                     console.log(id)
-                                    res.send({redirectUrl: "http://localhost:3000/#/issuer-dashboard/" + requestData.issuerId})
+                                    res.send({ redirectUrl: "http://localhost:3000/#/issuer-dashboard/" + requestData.issuerId })
                                 })
                         }
                     })
@@ -67,12 +67,12 @@ router.post("/verifymember", (req, res) => {
                     res.sendStatus(404)
                 }
             })
-            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" }) })
 
     } catch (error) {
         res.sendStatus(401)
     }
-    
+
 
 })
 
@@ -89,7 +89,7 @@ router.post("/certs", (req, res) => {
             .then(() => {
                 res.sendStatus(200)
             })
-            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" }) })
     } else {
         res.sendStatus(401)
     }
@@ -148,16 +148,28 @@ router.post("/certs/publish", (req, res) => {
         const tree = new MerkleTree(leaves, sha256)
         const buffer = tree.getRoot();
         const web3 = new Web3(new Web3.providers.HttpProvider(ropstenInfuraApi));
-        web3.eth.getTransactionCount(req.body.certs[0].issuer.address)
+        const ethAddressProvider = req.body.certs[0].issuer.webPage + "/eth/address"
+        fetch(ethAddressProvider, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        })
+            .then(res => res.json())
+            .then(data => {
+                
+                return data.addresses[0].ethAddress
+            })
+            .then(address => {
+                return web3.eth.getTransactionCount(address)
+            })
             .then((count) => {
                 return createRawTx(web3, buffer, count)
             })
             .then((txData) => {
                 console.log(txData)
-                const body = jwt.sign(txData, es256Private, {algorithm: "ES256"})
+                const body = jwt.sign(txData, es256Private, { algorithm: "ES256" })
                 return fetch(req.body.certs[0].issuer.webPage + "/eth/sign", {
                     method: 'post',
-                    body: JSON.stringify({token: body}),
+                    body: JSON.stringify({ token: body }),
                     headers: { 'Content-Type': 'application/json' },
                 })
             })
@@ -209,9 +221,9 @@ router.get("/certs/:id/requests", (req, res) => {
                     delete row.password_hash
                     row.status = row.status === requestedCertStatus.pending ? "pending" : requestedCertStatus.approved ? "approved" : "rejected"
                 });
-                res.send({requests: rows})
+                res.send({ requests: rows })
             })
-            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" }) })
     } else {
         res.sendStatus(401)
     }
