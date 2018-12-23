@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Saturday, 22nd December 2018 12:09:30 pm
+ * Last Modified: Sunday, 23rd December 2018 3:22:12 pm
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -148,19 +148,8 @@ router.post("/certs/publish", (req, res) => {
         const tree = new MerkleTree(leaves, sha256)
         const buffer = tree.getRoot();
         const web3 = new Web3(new Web3.providers.HttpProvider(ropstenInfuraApi));
-        const ethAddressProvider = req.body.certs[0].issuer.webPage + "/eth/address"
-        fetch(ethAddressProvider, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-        })
-            .then(res => res.json())
-            .then(data => {
-                
-                return data.addresses[0].ethAddress
-            })
-            .then(address => {
-                return web3.eth.getTransactionCount(address)
-            })
+        const address = req.body.certs[0].issuer.address
+        web3.eth.getTransactionCount(address)
             .then((count) => {
                 return createRawTx(web3, buffer, count)
             })

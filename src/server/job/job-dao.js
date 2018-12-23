@@ -98,8 +98,9 @@ function _getAppliedJobsOf(userId) {
     return promisePool
         .getPool()
         .query(
-            "SELECT job.*, apply_job.status, apply_job.job_id FROM apply_job "
+            "SELECT job.*, apply_job.status, apply_job.job_id, user.name employerName FROM apply_job "
             + "INNER JOIN job ON job.id = apply_job.job_id "
+            + "INNER JOIN user ON job.user_id = user.id "
             + "WHERE apply_job.user_id = ? "
             + "ORDER BY created_at DESC ",
             [userId]
