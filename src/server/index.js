@@ -15,7 +15,7 @@ const fetch = require('node-fetch');
 const Bluebird = require('bluebird');
 
 const {getCerts, getCertsOfUser} = require('./issuer/issuer-dao')
-const {getJobsOf, getJobs, getAppliedJobsOf } = require('./job/job-dao')
+const {getJobsOf, getJobs, getAppliedJobsOf, getSkills } = require('./job/job-dao')
 const {getUserProfileById, getUsersLike, checkIssuerMember} = require('./user/user-dao')
 const { ServerError } = require('./helper/server-error')
 const { prop } = require('ramda')
@@ -221,6 +221,14 @@ app.get("/api/issuers/:id/members/check", (req, res) => {
 		res.sendStatus(401)
 	}
     
+})
+
+app.get("/api/skills", (req, res) => {
+	getSkills()
+		.then(([rows]) => {
+			res.send({skills: rows})
+		})
+		.catch(err => res.sendStatus(500))
 })
 
 app.get('*', (req, res) => {

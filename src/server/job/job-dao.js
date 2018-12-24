@@ -107,11 +107,21 @@ function _getAppliedJobsOf(userId) {
         )
 }
 
+function _getSkills() {
+    return promisePool
+        .getPool()
+        .query(
+            "SELECT * from skill"
+        )
+}
+
+
 module.exports = {
     createJob: _createJob,
     createApplyJob: _createApplyJob,
     getJobs: _getJobs,
     getJobsOf: _getJobsOf,
     getApplicants: _getApplicants,
-    getAppliedJobsOf: _getAppliedJobsOf
+    getAppliedJobsOf: _getAppliedJobsOf,
+    getSkills: _getSkills
 }
