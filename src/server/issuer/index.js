@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Sunday, 23rd December 2018 3:22:12 pm
+ * Last Modified: Wednesday, 26th December 2018 8:07:05 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -18,7 +18,7 @@ const router = express.Router();
 const { sha256 } = require('./../helper/functions')
 const jwt = require('jsonwebtoken');
 const { getUserProfileById } = require('./../user/user-dao')
-const { createIssuerMember, createCert, updateSuccessCert, getCertRequests } = require('./issuer-dao')
+const { deleteCert, createIssuerMember, createCert, updateSuccessCert, getCertRequests } = require('./issuer-dao')
 const MerkleTree = require('merkletreejs')
 const stringify = require('json-stable-stringify')
 const fetch = require('node-fetch');
@@ -76,6 +76,26 @@ router.post("/verifymember", (req, res) => {
 
 })
 
+router.delete("/certs/:id", (req, res) => {
+    console.log("laksdfjlaksdfjlkasjdf")
+    if (req.user) {
+        deleteCert(req.params.id, req.user.id)
+            .then(([rows]) => {
+                if (rows.affectedRows > 0) {
+                    res.sendStatus(200)
+                } else {
+                    res.sendStatus(400)
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(400).send(err)
+            })
+    } else {
+        res.sendStatus(401)
+    }
+
+})
 
 router.post("/certs", (req, res) => {
     if (req.user && req.user.role === userRole.issuer) {

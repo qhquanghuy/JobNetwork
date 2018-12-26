@@ -4,7 +4,7 @@
  * File Created: Sunday, 2nd December 2018 12:15:23 pm
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Friday, 21st December 2018 7:27:20 am
+ * Last Modified: Wednesday, 26th December 2018 7:12:29 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -113,8 +113,17 @@ function _getCertsOfUser(userId) {
         )
 }
 
+function _deleteCert(certId, issuerId) {
+    return promisePool
+        .getPool()
+        .query(
+            "DELETE FROM published_cert WHERE published_cert.id = ? AND issuer_id = ?",
+            [certId, issuerId]
+        )
+}
 
 module.exports = {
+    deleteCert: _deleteCert,
     createIssuerMember: _createIssuerMember,
     createCert: _createCert,
     updateSuccessCert: _updateSuccessCert,
