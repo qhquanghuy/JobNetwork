@@ -85,7 +85,7 @@ function _getApplicants(employerId, jobId) {
     return promisePool
         .getPool()
         .query(
-            "SELECT user.*, apply_job.created_at applied_at FROM apply_job "
+            "SELECT user.*, apply_job.created_at applied_at, apply_job.status FROM apply_job "
             + "INNER JOIN job ON job.id = apply_job.job_id "
             + "INNER JOIN user ON apply_job.user_id = user.id "
             + "WHERE apply_job.job_id = ? ",
@@ -115,8 +115,39 @@ function _getSkills() {
         )
 }
 
+function _approveApplicant(jobId, userId) {
+    return promisePool
+        .getPool()
+        .query(
+            "UPDATE apply_job SET status = 3 where apply_job.job_id = ? AND apply_job.user_id = ?",
+            [jobId, userId]
+        )
+}
+
+
+function _rejcetApplicant(jobId) {
+    return promisePool
+        .getPool()
+        .query(
+            "UPDATE apply_job SET status = 2 where apply_job.job_id = ? AND apply_job.user_id = ?",
+            [jobId, userId]
+        )
+}
+
+
+function _deleteJob(jobId, userId) {
+    return promisePool
+        .getPool()
+        .query(
+            "DELETE FROM job WHERE job.id = ? AND job.user_id = ?",
+            [jobId, userId]
+        )
+}
 
 module.exports = {
+    deleteJob: _deleteJob,
+    rejcetApplicant: _rejcetApplicant,
+    approveApplicant: _approveApplicant,
     createJob: _createJob,
     createApplyJob: _createApplyJob,
     getJobs: _getJobs,

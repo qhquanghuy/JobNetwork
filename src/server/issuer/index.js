@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Wednesday, 26th December 2018 8:07:05 am
+ * Last Modified: Wednesday, 26th December 2018 8:22:47 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -77,7 +77,6 @@ router.post("/verifymember", (req, res) => {
 })
 
 router.delete("/certs/:id", (req, res) => {
-    console.log("laksdfjlaksdfjlkasjdf")
     if (req.user) {
         deleteCert(req.params.id, req.user.id)
             .then(([rows]) => {

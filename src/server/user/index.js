@@ -4,7 +4,7 @@
  * File Created: Monday, 22nd October 2018 11:05:51 am
  * Author: huynguyen (qhquanghuy96@gmail.com)
  * -----
- * Last Modified: Friday, 21st December 2018 1:38:12 am
+ * Last Modified: Wednesday, 26th December 2018 8:48:45 am
  * Modified By: huynguyen (qhquanghuy96@gmail.com)
  * -----
  */
@@ -17,37 +17,38 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const { createUser, findUserByEmail, getUserProfileById, createCertRequest, checkIssuerMember } = require('./user-dao')
-const { getApplicants, createJob, createApplyJob } = require('./../job/job-dao')
+const { deleteJob, approveApplicant, rejcetApplicant, getApplicants, createJob, createApplyJob } = require('./../job/job-dao')
 const { secret, userRole } = require('./../helper/constant')
 
 
 router.post("/signup", (req, res) => {
     createUser(req.body)
-        .then(user => res.send({token: jwt.sign({id: user.id, email: user.email, role: user.role }, secret) }))
-        .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+        .then(user => res.send({ token: jwt.sign({ id: user.id, email: user.email, role: user.role }, secret) }))
+        .catch(err => { console.log(err); res.status(500).send({ message: "Server error" }) })
 })
 
 router.post("/signin", (req, res) => {
     findUserByEmail(req.body.email, req.body.password)
         .then(([rows]) => {
-            if(rows[0]) {
+            if (rows[0]) {
                 const data = {
-                    token: jwt.sign({id: rows[0].id, email: rows[0].email, role: rows[0].role }, secret),
+                    token: jwt.sign({ id: rows[0].id, email: rows[0].email, role: rows[0].role }, secret),
                     info: rows[0]
 
                 }
-                res.send({user: data})
+                res.send({ user: data })
             } else {
-                res.status(401).send({message: "email or password is incorrect!"})
+                res.status(401).send({ message: "email or password is incorrect!" })
             }
         })
-        .catch(err => { 
-            if(err.code === 'ER_DUP_ENTRY') {
-                res.status(400).send({message: "email's already exist!"})
+        .catch(err => {
+            if (err.code === 'ER_DUP_ENTRY') {
+                res.status(400).send({ message: "email's already exist!" })
             } else {
-                res.status(500).send({ message: "Server error" })}
-
+                res.status(500).send({ message: "Server error" })
             }
+
+        }
         )
 })
 
@@ -64,25 +65,25 @@ router.post("/member/request", (req, res) => {
                 if (rows[0]) {
                     const user = rows[0]
                     if (user.role === userRole.issuer) {
-                        res.send({token: jwt.sign(data, secret)})
+                        res.send({ token: jwt.sign(data, secret) })
                     } else {
                         res.sendStatus(400)
                     }
                 } else {
                     res.sendStatus(404)
                 }
-                
+
             })
-            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" }) })
     } else {
         res.sendStatus(401)
     }
-    
+
 })
 
 //request cert
 router.post("/certs/:publishedCertId/request", (req, res) => {
-    if(req.user && req.body.issuerId !== req.user.id) {
+    if (req.user && req.body.issuerId !== req.user.id) {
         checkIssuerMember(req.body.issuerId, req.user.id)
             .then(([rows]) => {
                 if (rows.length > 0) {
@@ -98,14 +99,14 @@ router.post("/certs/:publishedCertId/request", (req, res) => {
                         userId: req.user.id
                     }
                     return createCertRequest(request)
-                            .then(() => {
-                                res.sendStatus(200)
-                            })
+                        .then(() => {
+                            res.sendStatus(200)
+                        })
                 } else {
-                    res.status(400).send({error: "user is not member of issuer"})
+                    res.status(400).send({ error: "user is not member of issuer" })
                 }
             })
-            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" }) })
     } else {
         res.sendStatus(401)
     }
@@ -119,15 +120,36 @@ router.get("/jobs/:id/applicants", (req, res) => {
                 rows.forEach(row => {
                     delete row.password_hash
                 });
-                res.send({applicants: rows})
+                res.send({ applicants: rows })
             })
-            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" }) })
 
     } else {
         res.sendStatus(401)
     }
 })
 
+
+//employer delete job
+router.delete("/jobs/:jobId", (req, res) => {
+    if (req.user && req.user.role === userRole.employer) {
+        req.body.job.userId = req.user.id
+        deleteJob(req.params.jobId, req.user.id)
+            .then(([rows]) => {
+                if (rows.affectedRows > 0) {
+                    res.sendStatus(200)
+                } else {
+                    res.sendStatus(400)
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(400).send(err)
+            })
+    } else {
+        res.sendStatus(401)
+    }
+})
 
 //employer create job
 router.post("/jobs", (req, res) => {
@@ -137,7 +159,7 @@ router.post("/jobs", (req, res) => {
             .then(() => {
                 res.sendStatus(200)
             })
-            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" }) })
     } else {
         res.sendStatus(401)
     }
@@ -150,7 +172,51 @@ router.post("/jobs/:jobId/apply", (req, res) => {
             .then(() => {
                 res.sendStatus(200)
             })
-            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" })})
+            .catch(err => { console.log(err); res.status(500).send({ message: "Server error" }) })
+    } else {
+        res.sendStatus(401)
+    }
+})
+
+
+
+
+router.put("/jobs/approve", (req, res) => {
+    if (req.user && req.user.role === userRole.employer) {
+        console.log(req.body)
+        approveApplicant(req.body.jobId, req.body.userId)
+            .then(([rows]) => {
+                if (rows.affectedRows > 0) {
+                    res.sendStatus(200)
+                } else {
+                    res.sendStatus(400)
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                res.sendStatus(500)
+            })
+    } else {
+        res.sendStatus(401)
+    }
+})
+
+
+router.put("/jobs/reject", (req, res) => {
+    if (req.user && req.user.role === userRole.employer) {
+        console.log(req.body)
+        rejcetApplicant(req.body.jobId, req.body.userId)
+            .then(([rows]) => {
+                if (rows.affectedRows > 0) {
+                    res.sendStatus(200)
+                } else {
+                    res.sendStatus(400)
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                res.sendStatus(500)
+            })
     } else {
         res.sendStatus(401)
     }
