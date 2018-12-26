@@ -185,11 +185,21 @@ app.get("/api/employers/:id/jobs", (req, res) => {
 
 app.get("/api/issuers/:id/certs", (req, res) => {
 	const userId = req.user == undefined ? null : req.user.id
-    getCerts(userId, req.params.id)
+	let userCert = []
+	getCertsOfUser(userId)
+		.then(([rows]) => {
+			userCert = rows.map(row => row.published_cert_id)
+			return getCerts(req.params.id)
+		})
 		.then(([rows]) => {
 			rows.forEach(row => {
 				delete row.password_hash
 				row.status = row.status === requestedCertStatus.pending ? "pending" : requestedCertStatus.approved ? "approved" : "rejected"
+				if (userCert.includes(row.id)) {
+					row.isRequested = 1
+				} else {
+					row.isRequested = 0
+				}
 			});
 			res.send({certs: rows})
 		})
