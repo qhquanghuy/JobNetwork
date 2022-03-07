@@ -6,42 +6,50 @@ import getTargetValue from '../../helpers/getTargetValue';
 import SignupComponent from './Signup.component';
 import { actions } from './Signup.duck';
 
+import { withRouter } from 'react-router-dom'
+
+
 const Signup = ({
 	handleSubmit,
 	loading,
-	updateUsername,
+	updateEmail,
 	updatePassword,
-	success,
-	id
+	updateReytypePassword,
+	role
 }) => (
 	<SignupComponent
 		handleSubmit={ handleSubmit }
 		loading={ loading }
-		updateUsername={ updateUsername }
+		updateEmail={ updateEmail }
 		updatePassword={ updatePassword }
-		success={ success }
-		id={ id }
+		updateReytypePassword={ updateReytypePassword }
+		role = { role }
 	/>
 );
 
 const enhanceComponent = compose(
+	withRouter,
 	connect(prop('signupReducer'), actions),
 	withHandlers({
 		handleSubmit: ({
-			username,
+			email,
 			password,
 			sendSignupInfo
 		}) => (event) => {
 			event.preventDefault();
 
-			sendSignupInfo({ username, password });
+			sendSignupInfo({ email, password });
 		},
-		updateUsername: ({ setUsername }) => compose(
-			setUsername,
+		updateEmail: ({ setEmail }) => compose(
+			setEmail,
 			getTargetValue
 		),
 		updatePassword: ({ setPassword }) => compose(
 			setPassword,
+			getTargetValue
+		),
+		updateRetypePassword: ({ setRetypePassword }) => compose(
+			setRetypePassword,
 			getTargetValue
 		)
 	})

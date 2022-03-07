@@ -4,34 +4,62 @@ import './Signup.scss';
 const Signup = ({
 	handleSubmit,
 	loading,
-	username,
-	password,
-	updateUsername,
+	updateEmail,
 	updatePassword,
-	success,
-	id
+	updateRetypePassword,
+	updateRole,
+	role
 }) => (
 	<form onSubmit={ handleSubmit }>
-		<h3>Redux-Observable Form</h3>
+		<h3>Sign up</h3>
 
-		<p className="text-success">
-			{ success && `Success! Your id is ${id}`}
+		<p className = "text-danger">
+
 		</p>
-
 		<input
-			placeholder="Username"
+			placeholder="Email"
 			className="form-control"
-			value={ username }
-			onChange={ updateUsername }
+			onChange={ updateEmail }
 		/>
-
+		
 		<input
 			type="password"
 			placeholder="Password"
 			className="form-control"
-			value={ password }
 			onChange={ updatePassword }
 		/>
+
+		<p className = "text-danger">
+			
+		</p>
+		<input
+			type="password"
+			placeholder="Retype password"
+			className="form-control"
+			onChange={ updateRetypePassword }
+		/>
+
+		<input
+			placeholder="Name"
+			className="form-control"
+			onChange={ updateEmail }
+		/>
+
+		
+
+		<div>
+
+			<span>
+				<label>
+					Role
+				</label>
+				<select defaultValue = { role }>
+					<option value="1">User</option>
+					<option value="2">Employer</option>
+					<option value="3">Issuer</option>
+				</select>
+			</span>
+		</div>
 
 		<button className="btn btn-primary">
 			{ loading ? 'Loading...' : 'Sign up'}
